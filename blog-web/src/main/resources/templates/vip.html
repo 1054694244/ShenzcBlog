@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>基本信息</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body>
+<div align="center">
+    <div th:if="${!#lists.isEmpty(session.user.supperTime)}" style="color: #af281e; font-weight: 900; font-size: 20px">
+        <span>vip到期时间</span>
+        <span th:text="${session.user.supperTime}"></span>
+    </div>
+    <div align="center">
+        <a href="#" onclick="Vip(12)" ><img th:src="@{/image/12.png}" width="100px" height="100px" /></a>
+        <a href="#" onclick="Vip(3)"><img th:src="@{/image/3.png}" width="100px" height="100px"/></a>
+        <a href="#" onclick="Vip(1)"><img th:src="@{/image/1.png}" width="100px" height="100px"/></a>
+    </div>
+    <div>
+        <div>
+            <img th:src="@{/image/pay.png}" width="100px" height="100px"/>
+        </div>
+        <div>
+            <span id="check" style="color: #af281e; font-weight: 900; font-size: 20px"></span>
+        </div>
+        <div>
+            <span id="becomeVip" class="easyui-linkbutton">点击支付</span>
+        </div>
+    </div>
+</div>
+<span id="id" th:value="${session.user.userId}"></span>
+
+
+<script type="text/javascript">
+
+    var vip = null;
+
+    function Vip(num){
+        vip = num;
+        $("#check").text("您已经选择充值"+vip+"个月的套餐")
+    }
+
+    $("#becomeVip").click(function () {
+        if (vip==null) {
+            alert("请选择套餐")
+            return
+        }
+        $.ajax({
+            url: '/becomeVip',
+            data: {
+                "vip":vip,
+                "id": $("#id").attr("value")
+            },
+            type:'POST',
+            success: function (data) {
+                if(data.success){
+                    alert("充值成功");
+                }
+            }
+        })
+    });
+</script>
+
+</body>
+</html>
+
+

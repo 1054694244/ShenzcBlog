@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>写博客</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+    <!--引入kindEditor-->
+    <link rel="stylesheet" th:href="@{/plugins/kindeditor/themes/default/default.css}"/>
+    <script charset="utf-8" th:src="@{/plugins/kindeditor/kindeditor-all.js}"></script>
+    <script charset="utf-8" th:src="@{/plugins/kindeditor/lang/zh-CN.js}"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body>
+
+<div id="dlg" title="Write Blog" class="easyui-dialog" style="width:800px;height:400px;padding:10px 20px">
+    <form id="fm" method="post" action="/submitArticle">
+        <div class="fitem" align="center">
+            <input name="authorId" hidden="hidden"  th:value="${session.user.userId}" style="width: 100px;"/>
+            <input name="title" class="easyui-textbox" required="required" style="width: 100px;"/>
+        </div>
+        <div class="fitem" align="right">
+            <input class="easyui-combobox" name="categoryId" value="请选择" required="required" id="comptypeid" style="width:200px;border: none" />
+        </div>
+        <div class="fitem">
+            <textarea rows="3" style="width:745px;height: 250px" id="content" name="content" class="easyui-validatebox" data-options="required:true,validType:'length[1,1000000]'" invalidMessage="最大长度不能超过1000000"></textarea>
+        </div>
+        <div class="fitem" align="center">
+            <input type="submit" value="提交" class="easyui-selectbox" />
+            <input type="button" value="保存" onclick="sava()" class="easyui-selectbox" />
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $.ajax({
+            type:"post",
+            url:"/findAllCategory",
+            dataType:"json",
+            success:function(json){
+                $("#comptypeid").combobox({//往下拉框塞值
+                    data:json,
+                    valueField:"categoryId",//value值
+                    textField:"categoryName",//文本值
+                    panelHeight:"auto"
+                })
+            }
+        });
+    });
+
+    function save() {
+        $.ajax({
+            url: "/saveArticle",
+            type: "GET",
+            success: function (data) {
+                $("#dlg").dialog("close")
+            }
+        })
+    }
+
+
+    var editor;
+    $(function() {
+        editor = KindEditor.create('textarea[name="content"]',{resizeType : 1,width:"100%",height:"200px",afterChange:function(){
+                this.sync();
+            },
+            afterBlur:function(){
+                this.sync();
+            }});
+    });
+
+
+
+</script>
+
+</body>
+</html>
+
+

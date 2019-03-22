@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>关注的人</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+    <!--引入本地js文件-->
+
+</head>
+<body style="background-image: url('http://shenzc.blog.com/image/004.jpg');background-repeat:repeat-y">
+
+<div th:if="${#lists.isEmpty(userList)}">
+    <p style="color: #af4031;font-size: 20px">还有没有关注过人</p>
+</div>
+
+<div th:if="${not #lists.isEmpty(userList)}" align="center">
+    <div align="center" >
+        <p style="color: #af4031;font-size: 20px">关注的人</p>
+        <div th:each="user: ${userList}" style="width: 600px;height: 100px;border:1px solid #1e282c ;padding: 15px;"  >
+            <!--<a style="text-decoration: blink" th:href="@{/findArticleAndRepley/(id=${article.articleId})}" target="_blank"><div th:text="${article.title}" style="color: #1e282c;font-weight: 900;font-size: 20px"></div></a><br/>-->
+            <div align="left" style="float: left">
+                <a target="_blank" th:href="@{/basicUser/(id = ${user.userId})}"><img th:src="@{'http://shenzc.blog.com/image/'+${user.head}}"  width="30px" height="30px" class="easyui-linkbutton"/></a>
+                <div th:text="${user.username}" style="float: left ;color: #1e282c;font-weight: 900;font-size: 20px"></div>
+                <span th:if="${user.isSupper} == 'Y'">
+                <img th:src="@{/image/vip.jpg}" style="float: left" width="30px" height="30px">
+            </span>
+            </div>
+            <div align="right">
+                <span style="color: #1e282c;font-weight: 400;">文章数:</span><span th:text="${user.myArticleNum}" align="right"></span>
+                <span style="color: #1e282c;font-weight: 400;">访问量:</span><span th:text="${user.seePerson}" align="right"></span>
+                <span style="color: #1e282c;font-weight: 400;">关注人数:</span><span th:text="${user.followNum}" align="right"></span>
+                <span style="color: #1e282c;font-weight: 400;">关注文章数:</span><span th:text="${user.articleNum}" align="right"></span>
+                <div th:text="${user.createTime}" align="right" ></div>
+                <span style="color: #1e282c;font-weight: 400;">生日:</span><span th:text="${user.birthday}" align="right"></span>
+            </div>
+            <div>
+                <a th:href="@{/cancelFollow/(id = ${user.userId})}" class="easyui-linkbutton">取消关注</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

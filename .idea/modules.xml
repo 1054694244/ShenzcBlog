@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/blog-common/blog-common.iml" filepath="$PROJECT_DIR$/blog-common/blog-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-manage/blog-manage.iml" filepath="$PROJECT_DIR$/blog-manage/blog-manage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-service-article/blog-service-article.iml" filepath="$PROJECT_DIR$/blog-service-article/blog-service-article.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-service-category/blog-service-category.iml" filepath="$PROJECT_DIR$/blog-service-category/blog-service-category.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-service-file/blog-service-file.iml" filepath="$PROJECT_DIR$/blog-service-file/blog-service-file.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-service-picture/blog-service-picture.iml" filepath="$PROJECT_DIR$/blog-service-picture/blog-service-picture.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-service-user/blog-service-user.iml" filepath="$PROJECT_DIR$/blog-service-user/blog-service-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/blog-web/blog-web.iml" filepath="$PROJECT_DIR$/blog-web/blog-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eureka-service/eureka-service.iml" filepath="$PROJECT_DIR$/eureka-service/eureka-service.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>首页</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地js文件-->
+
+</head>
+<body>
+
+
+<table id="dg" title="分类管理" class="easyui-datagrid" style="width:auto;height:auto"
+       url="/findAllCategoryPage"
+       toolbar="#tb"
+       rownumbers="true" pagination="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+        <th field="categoryId" width="50">ID</th>
+        <th field="categoryName" width="50">分类名称</th>
+        <th field="createTime" width="50">创建时间</th>
+        <th field="createBy" width="50">由谁创建</th>
+        <th field="isDelete" width="50">是否删除</th>
+    </tr>
+    </thead>
+</table>
+
+
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <div class="ftitle">分类信息</div>
+    <form id="fm" method="post">
+        <div class="fitem">
+            <label>分类名称</label>
+            <input name="categoryName" class="easyui-validatebox" required="true"/>
+        </div>
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveCategory()">保存</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">关闭</a>
+</div>
+
+<div id="tb" style="padding:3px">
+    <div>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newCategory()">增加分类</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editCategory()">编辑分类</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyCategory()">删除分类</a>
+    </div>
+    <div>
+        <span>ID:</span>
+        <input id="categoryId" style="line-height:22px;border:1px solid #ccc" />
+        <span>分类名称:</span>
+        <input id="categoryName" style="line-height:22px;border:1px solid #ccc" />
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">Search</a>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var url;
+    function newCategory(){
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle','New Category');
+        $('#fm').form('clear');
+        url = '/addCategory';
+    }
+    function editCategory(){
+        var row = $('#dg').datagrid('getSelected');
+        if (row){
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit Category');
+            $('#fm').form('load',row);
+            url = '/updateCategory?id='+row.categoryId;
+        }
+    }
+    function saveCategory(){
+        $('#fm').form('submit',{
+            url: url,
+            onSubmit: function(){
+                return $(this).form('validate');
+            },
+            success: function(result){
+                var result = eval('('+result+')');
+                if (result.errorMsg){
+                    $.messager.show({
+                        title: 'Error',
+                        msg: result.errorMsg
+                    });
+                } else {
+                    $('#dlg').dialog('close');		// close the dialog
+                    $('#dg').datagrid('reload');	// reload the Category data
+                }
+            }
+        });
+    }
+
+    function destroyCategory(){
+        var row = $('#dg').datagrid('getSelected');
+        if (row){
+            $.messager.confirm('Confirm','Are you sure you want to destroy this Category?',function(r){
+                if (r){
+                    $.post('/deleteCategory',{id:row.categoryId},function(result){
+                        if (result.success){
+                            $('#dg').datagrid('reload');	// reload the Category data
+                        } else {
+                            $.messager.show({	// show error message
+                                title: 'Error',
+                                msg: result.message
+                            });
+                        }
+                    },'json');
+                }
+            });
+        }
+    }
+
+    function doSearch(){
+        $('#dg').datagrid('load',{
+            categoryId: $('#categoryId').val(),
+            categoryName: $('#categoryName').val()
+        });
+    }
+
+
+</script>
+
+
+
+</body>
+</html>

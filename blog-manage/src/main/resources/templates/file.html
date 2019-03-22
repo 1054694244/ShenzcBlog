@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>博客管理</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地js文件-->
+    <script type="text/javascript" th:src="@{/js/url.js}"></script>
+
+</head>
+<body>
+
+<table id="dg" title="文件管理" class="easyui-datagrid" style="width:auto;height:auto"
+       toolbar="#tb"
+       url="/findAllFile"
+       rownumbers="true" pagination="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+        <th field="fileId" width="50" >ID</th>
+        <th field="fileTitle" width="50">标题</th>
+        <th field="username" width="50">作者</th>
+        <th field="file" width="50" data-options="formatter:check">文件</th>
+        <th field="money" width="50">零钱</th>
+    </tr>
+    </thead>
+</table>
+
+
+
+
+
+<div id="tb" style="padding:3px">
+    <div>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除文件</a>
+    </div>
+    <div>
+        <span>ID:</span>
+        <input id="fileId" style="line-height:22px;border:1px solid #ccc" />
+        <span>标题:</span>
+        <input id="fileTitle" style="line-height:22px;border:1px solid #ccc" />
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function destroyUser(){
+        var row = $('#dg').datagrid('getSelected');
+        if (row){
+            $.messager.confirm('Confirm','Are you sure you want to destroy this file?',function(r){
+                if (r){
+                    $.post('/deleteFile',{id:row.fileId},function(result){
+                        if (result.success){
+                            $('#dg').datagrid('reload');	// reload the user data
+                        } else {
+                            $.messager.show({	// show error message
+                                title: 'Error',
+                                msg: result.message
+                            });
+                        }
+                    },'json');
+                }
+            });
+        }
+    }
+
+    function doSearch(){
+        $('#dg').datagrid('load',{
+            fileId: $('#fileId').val(),
+            fileTitle: $('#fileTitle').val()
+        });
+    }
+
+
+</script>
+
+
+
+</body>
+</html>

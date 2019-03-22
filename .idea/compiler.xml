@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="blog-common" />
+        <module name="blog-manage" />
+        <module name="blog-service-article" />
+        <module name="blog-service-category" />
+        <module name="blog-service-file" />
+        <module name="blog-service-picture" />
+        <module name="blog-service-user" />
+        <module name="blog-web" />
+        <module name="eureka-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="blog-common" target="1.8" />
+      <module name="blog-manage" target="1.8" />
+      <module name="blog-service-article" target="1.8" />
+      <module name="blog-service-category" target="1.8" />
+      <module name="blog-service-file" target="1.8" />
+      <module name="blog-service-login" target="1.8" />
+      <module name="blog-service-picture" target="1.8" />
+      <module name="blog-service-user" target="1.8" />
+      <module name="blog-web" target="1.8" />
+      <module name="eureka-service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

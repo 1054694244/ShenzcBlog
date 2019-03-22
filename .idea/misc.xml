@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/blog-common/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-service-user/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-service-article/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-service-file/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-service-category/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-service-picture/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-manage/pom.xml" />
+        <option value="$PROJECT_DIR$/blog-web/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

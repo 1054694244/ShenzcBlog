@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>上传资源</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css" />
+    <link rel="stylesheet" type="text/css" thref="/plugins/easyui/demo/demo.css" />
+    <script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body>
+
+<div class="easyui-panel" title="Upload File" style="width:300px;padding:20px;">
+    <form id="ff" method="post" action="/uploadFile" enctype="multipart/form-data">
+        <div style="margin-bottom:10px">
+            <input name="authorId" hidden="hidden"  th:value="${session.user.userId}" style="width: 100px;"/>
+            <input class="easyui-textbox" label="标题:" name="fileTitle" data-options="required:true,validType:'length[3,8]'" style="width:100%"></input>
+        </div>
+        <div style="margin-bottom:10px">
+            <input class="easyui-filebox" label="文件:" name="file" style="width:100%"></input>
+        </div>
+        <div style="margin-bottom:10px">
+            <textarea class="easyui-textbox" label="零钱:" name="money" style="width:100%"></textarea>
+        </div>
+        <div style="text-align:right">
+            <input class="easyui-linkbutton" type="submit" value="提交" style="width:80px;height:30px"/>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
+
+

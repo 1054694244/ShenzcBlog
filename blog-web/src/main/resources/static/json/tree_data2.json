@@ -1,0 +1,28 @@
+[
+
+    {
+      "categoryId": 2,
+      "parentId": 0,
+      "categoryName": "sssss管理",
+      "memo": "/manager/category"
+    },
+    {
+      "categoryId": 3,
+      "parentId": 0,
+      "categoryName": "博客管理",
+      "memo": "/manager/article"
+    },
+    {
+      "categoryId": 4,
+      "parentId": 0,
+      "categoryName": "文件管理",
+      "memo": "/manager/file"
+    },
+      {
+      "categoryId": 5,
+      "parentId": 0,
+      "categoryName": "用户管理",
+      "memo": "/manager/user"
+      }
+
+  ]

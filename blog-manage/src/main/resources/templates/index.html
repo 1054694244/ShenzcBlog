@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>首页</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/metro/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地js文件-->
+    <script type="text/javascript" th:src="@{/js/index.js}"></script>
+
+</head>
+<body>
+<div class="easyui-layout" data-options="fit:true">
+
+    <div data-options="region:'north'" style="height:70px; background-color: cornflowerblue;">
+        <h1 align="center">MyBlog后台管理系统</h1>
+    </div>
+
+    <div data-options="region:'west',split:true" title="菜单" style="width: 200px;">
+        <div class="easyui-panel" data-options="fit:true">
+            <ul id="mytree" class="easyui-tree" data-options="animate:true,lines:true"></ul>
+        </div>
+    </div>
+
+    <div data-options="region:'center'">
+        <div id="mainTabs" class="easyui-tabs" data-options="fit:true">
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>个人主页</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body>
+
+<div align="center">
+    <div>
+        <div style="color: #1e282c;font-size: large;">
+            <span th:text="${user.username}" ></span>的个人主页
+        </div>
+        <div><img th:src="@{'http://shenzc.blog.com/image/'+${user.head}}" width="60px" height="60px"/></div>
+    </div>
+    <div>
+        <div th:if="${not #lists.isEmpty(session.user)}">
+            <div th:if="${session.user.userId} != ${user.userId}" style="color: #1e282c;font-size: large;">
+                <div th:if="${user.utf1} == '已经被关注了'">
+                    <a th:href="@{/cancelFollow2/(id = ${user.userId})}" class="easyui-linkbutton">取消关注</a>
+                </div>
+                <div th:if="${user.utf1} != '已经被关注了'">
+                    <a th:href="@{/updateUserFollow/(id = ${user.userId})}" class="easyui-linkbutton">关注</a>
+                </div>
+            </div>
+        <div>
+        <div style="color: #1e282c;font-size: large;">
+            文章总数:<span th:text="${user.myArticleNum}" ></span>
+        </div>
+        <div style="color: #1e282c;font-size: large;">
+            浏览量:<span th:text="${user.seePerson}" ></span>
+        </div>
+        <div style="color: #1e282c;font-size: large;">
+            被关注的人数:<span th:text="${user.isFollow}" ></span>
+        </div>
+        <div style="color: #1e282c;font-size: large;">
+            关注的人数:<span th:text="${user.followNum}" ></span>
+        </div>
+        <div style="color: #1e282c;font-size: large;">
+            关注的文章数:<span th:text="${user.articleNum}" ></span>
+        </div>
+    </div>
+</div>
+<span id="id" th:value="${user.userId}"></span>
+
+<div>
+    <div align="center" >
+        <div th:each="article: ${articleList}" style="width: 600px;height: 120px;border:1px solid #1e282c ;padding: 15px;"  >
+            <a style="text-decoration: blink" th:href="@{/findArticleAndRepley/(id=${article.articleId})}" target="_blank"><div th:text="${article.title}" style="color: #1e282c;font-weight: 900;font-size: 20px"></div></a><br/>
+            <div align="left">
+                <div>
+                    <span style="color: #af292a;font-weight: 400;">浏览次数:</span><span th:text="${article.singleSeePerson}"></span>
+                </div>
+                <div style="margin-top: 10px">
+                    <span style="float: left;color: #af1b1c;font-weight: 400;">点赞数:</span><span th:text="${article.goods}" align="left"></span>
+                </div>
+            </div>
+            <div align="right">
+                <div th:text="${article.createTime}" align="right" ></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+</script>
+
+</body>
+</html>
+
+

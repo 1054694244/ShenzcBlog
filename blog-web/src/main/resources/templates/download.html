@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>下载资源</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="/plugins/easyui/themes/icon.css" />
+    <link rel="stylesheet" type="text/css" thref="/plugins/easyui/demo/demo.css" />
+    <script type="text/javascript" src="/plugins/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/plugins/easyui/jquery.easyui.min.js"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body th:align="center">
+        <div th:if="${session.user.isSupper} == 'Y'">
+            <a th:href="@{'http://shenzc.blog.com/MyFile/'+${file.file}}"+><h2>VIP,点击下载</h2></a>
+        </div>
+        <div th:if="${session.user.isSupper} == 'N'">
+            <a th:href="@{'http://shenzc.blog.com/MyFile/'+${file.file}}"+><h2>已扣除零钱,点击下载</h2></a>
+        </div>
+</body>
+</html>
+
+

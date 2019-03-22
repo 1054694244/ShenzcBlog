@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzc.mapper.ArticleMapper">
+
+
+    <select id="findArticleById" resultType="com.shenzc.Entity.Article">
+        select
+        u.username,u.head,c.category_name as categoryName,a.*
+        from article a
+        left join user u on u.user_id = a.author_id
+        left join category c on c.category_id = a.category_id
+        <where>
+                a.author_id = #{authorId}
+
+            <if test="title!=null and title!=''">
+                and a.title like concat('%',#{title},'%')
+            </if>
+            <if test="articleId!=null and articleId!=''">
+                and a.article_id like concat('%',#{articleId},'%')
+            </if>
+        </where>
+
+    </select>
+
+    <select id="findAllArticle" resultType="com.shenzc.Entity.Article">
+        select
+        u.username,u.head,c.category_name as categoryName,a.*
+        from article a
+        left join user u on u.user_id = a.author_id
+        left join category c on c.category_id = a.category_id
+        <where>
+            <if test="username!=null and username!=''">
+                and u.username like concat('%',#{username},'%')
+            </if>
+            <if test="title!=null and title!=''">
+                and a.title like concat('%',#{title},'%')
+            </if>
+            <if test="articleId!=null and articleId!=''">
+                and a.article_id like concat('%',#{articleId},'%')
+            </if>
+        </where>
+
+    </select>
+
+    <select id="findArticleByCategoryId" resultType="com.shenzc.Entity.Article">
+        select
+        u.username,u.head,a.*
+        from article a
+        left join user u on u.user_id = a.author_id
+        where a.category_id = #{categoryId}
+        and is_pass = 1
+    </select>
+
+
+    <select id="findArticleByArticleId" resultType="com.shenzc.Entity.Article">
+        select
+        u.username,u.head,a.*,c.category_name as categoryName
+        from article a
+        left join user u on u.user_id = a.author_id
+        left join category c on c.category_id = a.category_id
+        where a.article_id = #{articleId}
+    </select>
+
+
+    <update id="addArticleGoods">
+        update article set goods = (goods+1) where article_id = #{articleId}
+    </update>
+
+    <update id="increaseArticleGoods">
+        update article set goods = (goods-1) where article_id = #{articleId}
+    </update>
+
+
+</mapper>

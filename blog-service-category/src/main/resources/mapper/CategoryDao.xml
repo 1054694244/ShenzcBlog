@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzc.mapper.CategoryDao">
+
+
+    <select id="findAllCategory" resultType="com.shenzc.Entity.Category">
+        select * from category
+        <where>
+            <if test="categoryId!=null and categoryId!=''">
+                and category_id like concat('%',#{categoryId},'%')
+            </if>
+            <if test="categoryName!=null and categoryName!=''">
+                and category_name like concat('%',#{categoryName},'%')
+            </if>
+        </where>
+
+    </select>
+
+
+</mapper>

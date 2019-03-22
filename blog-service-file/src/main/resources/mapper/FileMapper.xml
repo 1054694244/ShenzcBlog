@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzc.mapper.FileMapper">
+
+
+    <select id="findAllFileById" resultType="com.shenzc.Entity.File">
+        select
+        f.*,u.username
+        from file f
+        left join user u on u.user_id = f.author_id
+        <where>
+            and author_id = #{authorId}
+            <if test="username!=null and username!=''">
+                and u.username like concat('%',#{username},'%')
+            </if>
+            <if test="fileId!=null and fileId!=''">
+                and f.file_id like concat('%',#{fileId},'%')
+            </if>
+            <if test="fileTitle!=null and fileTitle!=''">
+                and f.file_title like concat('%',#{fileTitle},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllFile" resultType="com.shenzc.Entity.File">
+        select
+        f.*,u.username
+        from file f
+        left join user u on u.user_id = f.author_id
+        <where>
+            <if test="username!=null and username!=''">
+                and u.username like concat('%',#{username},'%')
+            </if>
+            <if test="fileId!=null and fileId!=''">
+                and f.file_id like concat('%',#{fileId},'%')
+            </if>
+            <if test="fileTitle!=null and fileTitle!=''">
+                and f.file_title like concat('%',#{fileTitle},'%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findFileByFileId" resultType="com.shenzc.Entity.File">
+        select
+        f.*,u.username
+        from file f
+        left join user u on u.user_id = f.author_id
+        where file_id = #{fileId}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>登陆</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body>
+<div  align="center">
+<div class="easyui-panel" title="登陆" style="width:300px;padding:10px;">
+    <form id="ff" action="/login" method="post">
+        <table align="center">
+            <tr>
+                <td>用户名:</td>
+                <td><input name="username" class="f1 easyui-textbox"></input></td>
+            </tr>
+            <tr>
+                <td>密码:</td>
+                <td><input name="password" class="f1 easyui-passwordbox"></input></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="登陆"></input></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</div>
+
+</body>
+</html>
+
+

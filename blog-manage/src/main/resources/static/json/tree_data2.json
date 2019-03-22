@@ -1,0 +1,32 @@
+[
+    {
+      "id": 1,
+      "parendId": 0,
+      "name": "用户管理",
+      "memo": "/manager/user"
+    },
+    {
+      "id": 2,
+      "parentId": 0,
+      "name": "分类管理",
+      "memo": "/manager/category"
+    },
+    {
+      "id": 3,
+      "parentId": 0,
+      "name": "博客管理",
+      "memo": "/manager/article"
+    },
+    {
+      "id": 4,
+      "parentId": 0,
+      "name": "文件管理",
+      "memo": "/manager/file"
+    },
+    {
+      "id": 5,
+      "parentId": 0,
+      "name": "图片管理",
+      "memo": "/manager/picture"
+    }
+  ]

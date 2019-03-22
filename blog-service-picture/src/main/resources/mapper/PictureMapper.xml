@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzc.mapper.PictureMapper">
+
+
+    <select id="findAllActivePicture" resultType="com.shenzc.Entity.Picture">
+            select
+            *
+            from picture
+            where is_active = '1'
+    </select>
+
+    <select id="findAllPictureByCategory" resultType="com.shenzc.Entity.Picture">
+            select
+            *
+            from picture
+            where category = #{category}
+    </select>
+
+    <select id="findIndexPicture" resultType="com.shenzc.Entity.Picture">
+            select
+            *
+            from  picture
+            where category = '首页大广告'
+    </select>
+
+</mapper>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>博客管理</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+    <!--引入kindEditor-->
+    <link rel="stylesheet" th:href="@{/plugins/kindeditor/themes/default/default.css}"/>
+    <script charset="utf-8" th:src="@{/plugins/kindeditor/kindeditor-all.js}"></script>
+    <script charset="utf-8" th:src="@{/plugins/kindeditor/lang/zh-CN.js}"></script>
+    <!--引入本地js文件-->
+
+</head>
+<body>
+
+<table id="dg" title="博客管理" class="easyui-datagrid" style="width:auto;height:auto"
+       toolbar="#tb"
+       rownumbers="true" pagination="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+        <th field="articleId" width="50">ID</th>
+        <th field="title" width="50">标题</th>
+        <th field="content" hidden="hidden" width="50">内容</th>
+        <th field="username" width="50">作者</th>
+        <th field="createTime" width="50" >创建时间</th>
+        <th field="updateTime" width="50">跟新时间</th>
+        <th field="categoryName" width="50">分类</th>
+        <th field="goods" width="50">点赞数</th>
+        <th field="isPass" width="50" id="sysValue" name="sysValue" class="easyui-combobox"
+                data-options="valueField: 'sysValue', textFiled: 'sysDesc', url: '/sys/getTypeName'"/>
+            审核是否通过
+        </th>
+    </tr>
+    </thead>
+</table>
+
+
+
+<div id="dlg" class="easyui-dialog" style="width:800px;height:450px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <form id="fm" method="post">
+        <div class="fitem" th:align="center">
+            <input id="id" name="articleId" value="" hidden="hidden"  class="easyui-validatebox" readonly="readonly" style="width: 700px;border: none;"/>
+            <input name="title" class="easyui-validatebox" readonly="readonly" style="width: 200px;border: none;"/>
+        </div>
+        <div class="fitem" th:align="right">
+            <input class="easyui-combobox" name="categoryId" readonly="readonly"  required="required" id="comptypeid" style="width:200px;border: none" />
+        </div>
+        <div class="fitem">
+            <textarea rows="3" style="width:700px;height: 250px" id="content"  name="content" class="easyui-validatebox" data-options="required:true,validType:'length[1,1000000]'" invalidMessage="最大长度不能超过1000000" readonly="readonly"></textarea>
+        </div>
+    </form>
+</div>
+<div id="dlg-buttons" th:align="center">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="pass(1)">审核通过</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="pass(2)">审核不通过</a>
+</div>
+
+<div id="tb" style="padding:3px">
+    <div>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="checkArticle()">查看文章</a>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除文章</a>
+    </div>
+    <div>
+        <span>ID:</span>
+        <input id="articleId" style="line-height:22px;border:1px solid #ccc" />
+        <span>作者:</span>
+        <input id="username" style="line-height:22px;border:1px solid #ccc" />
+        <span>标题:</span>
+        <input id="title" style="line-height:22px;border:1px solid #ccc" />
+        <a href="#" class="easyui-linkbutton" plain="true" onclick="doSearch()">查询</a>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $("#dg").datagrid({
+        url: "/findAllArticle"
+    })
+
+    var url ;
+
+    function checkArticle(){
+        var row = $('#dg').datagrid('getSelected');
+        KindEditor.html('#content',row.content);
+        if (row){
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle','check article');
+            $('#fm').form('load',row);
+            url = '/editArticle?articleId='+row.articleId;
+        }
+
+        $(function(){
+            $.ajax({
+                type:"post",
+                url:"/findAllCategory",
+                dataType:"json",
+                success:function(json){
+                    $("#comptypeid").combobox({//往下拉框塞值
+                        data:json,
+                        valueField:"categoryId",//value值
+                        textField:"categoryName",//文本值
+                        panelHeight:"auto"
+                    })
+                }
+            });
+        });
+    }
+
+    function pass(num) {
+        $.ajax({
+            url:url,
+            data: {
+                "isPass": num ,
+            },
+            type: "POST",
+            success: function (data) {
+                $('#dlg').dialog('close');
+                $('#dg').datagrid('reload');
+            }
+        });
+    }
+
+    function destroyUser(){
+        var row = $('#dg').datagrid('getSelected');
+        if (row){
+            $.messager.confirm('Confirm','Are you sure you want to destroy this article?',function(r){
+                if (r){
+                    $.post('/deleteArticleByArticleId',{articleId:row.articleId},function(result){
+                        if (result.success){
+                            $('#dg').datagrid('reload');	// reload the user data
+                        } else {
+                            $.messager.show({	// show error message
+                                title: 'Error',
+                                msg: result.message
+                            });
+                        }
+                    },'json');
+                }
+            });
+        }
+    }
+
+    function doSearch(){
+        $('#dg').datagrid('load',{
+            articleId: $('#articleId').val(),
+            username: $('#username').val(),
+            title: $('#title').val()
+        });
+    }
+
+
+    var editor;
+    $(function() {
+        editor = KindEditor.create('textarea[name="content"]',{resizeType : 1,width:"100%",height:"300px",afterChange:function(){
+                this.sync();
+            },
+            afterBlur:function(){
+                this.sync();
+            }});
+    });
+
+
+
+
+</script>
+
+
+
+</body>
+</html>

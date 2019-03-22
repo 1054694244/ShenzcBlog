@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>浏览文章</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+    <!--引入本地css文件-->
+    <link type="text/css" rel="stylesheet" th:href="@{/css/demo.css}"/>
+    <script type="text/javascript" th:src="@{/js/click.js}"></script>
+
+
+</head>
+<body>
+<div th:if="${#lists.isEmpty(session.user)}" align="center">
+    <a href="/login"  class="easyui-linkbutton" id="login">请登陆</a>
+</div>
+<div th:if="${not #lists.isEmpty(session.user)}" align="center">
+    <div id="isLogin" th:value="${session.user.username}" align="right" hidden="hidden"></div>
+</div>
+
+
+<div style="width: 60%;margin-left: 30px;margin-top: 30px;margin-bottom: 30px;float: left;">
+    <div style="margin-bottom: 30px">
+        <div style="margin-bottom: 30px"  align="center">
+            <div th:text="${article.title}" style="color: #1e282c;font-weight: 900;font-size: 20px"></div>
+            <a th:href="@{/basicUser/(id=${article.authorId})}" ><img th:src="@{'http://shenzc.blog.com/image/'+${article.head}}" style="float: left" width="30px" height="30px" class="easyui-linkbutton"/></a>
+            <div th:text="${article.username}" align="left" style="float: left" class="easyui-linkbutton"></div>
+            <div th:text="${article.createTime}" align="right"></div>
+            <div id="id" th:value="${article.articleId}" hidden="hidden" align="right"></div>
+        </div>
+        <span id="content" th:value="${article.content}"></span>
+        <div align="center">
+            <!--<input id="goods" readonly="readonly" style="width: 30px;border: none" th:value="${article.goods}" />
+            &lt;!&ndash;<a href="#" onclick="clickGoods()" class="easyui-linkbutton">点赞</a>&ndash;&gt;
+            <span id="img" onclick="click()"><img src="/image/zan.png" style="width: 30px;height: 30px" id="zan" /></span>-->
+            <div th:text="${article.goods}"></div>
+            <div th:if="${not #lists.isEmpty(session.user)}">
+                <div th:if="${session.user.userId} != ${article.authorId}" style="color: #1e282c;font-size: large;">
+                    <div th:if="${article.utf1} == '已经被关注了'">
+                        <a th:href="@{/cancelArticle2/(id = ${article.articleId})}" class="easyui-linkbutton">取消关注</a>
+                    </div>
+                    <div th:if="${article.utf1} != '已经被关注了'">
+                        <a th:href="@{/updateUserArticle/(id = ${article.articleId})}" class="easyui-linkbutton">关注</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div>
+        <div style="color: #1e282c;font-weight: 900;font-size: 20px" align="center">评论</div>
+        <div style="margin-bottom: 20px;">
+            <input id="replyContent"  name="content" class="f1 easyui-textbox" style="width: 89%"></input>
+            <a href="#" onclick="reply(0)" class="easyui-linkbutton">发表评论</a>
+        </div>
+        <div th:each="reply,replyStat: ${replyList}"   style="width: 100%;height: 7%;border:1px solid #1e282c ;padding: 15px;">
+            <span th:text="${reply.username}" ></span>:
+            <span th:text="${reply.content}" ></span>
+            (<span th:text="${reply.createTime}"></span>)
+            <a href="#" onclick="reply(1)" class="easyui-linkbutton">回复</a>
+            <span id="replyId" hidden="hidden" th:value="${reply.replyId}" ></span>
+            <div th:each="replyP : ${reply.replyList}" style="color: #8aa4af;font-size: 4px">
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <span th:text="${replyP.username}" ></span>:
+                <span th:text="${replyP.content}" ></span>
+                (<span th:text="${replyP.createTime}"></span>)
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div style="background-image: url('http://shenzc.blog.com/image/004.jpg')"></div>
+</div>
+
+
+<script type="text/javascript">
+    //回复
+    function reply(num) {
+        if($("#isLogin").attr("value") == null){
+            alert("不能评论请先登陆");
+            return
+        }
+        if(num != 0){
+            num = $("#replyId").attr("value")
+        }
+        var str = document.getElementById("replyContent").value
+        if(str == null || str == ''){
+            alert("评论为空,请先评论")
+            return
+        }
+        $.ajax({
+            url: '/reply',
+            data: {
+                "articleId":$("#id").attr("value"),
+                "parentId" : num,
+                "content" : str
+            },
+            type:'POST',
+            success: function (data) {
+                if(data.success){
+
+                }
+            }
+        })
+    };
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenzc.mapper.UserDao">
+
+
+    <select id="findAllUser" resultType="com.shenzc.Entity.User">
+                  select * from USER
+                  <where>
+                      <if test="userId!=null and userId!=''">
+                          and user_id like concat('%',#{userId},'%')
+                      </if>
+                      <if test="username!=null and username!=''">
+                          and username concat('%',#{username},'%')
+                      </if>
+                  </where>
+    </select>
+
+    <select id="selectUserById" resultType="com.shenzc.Entity.User">
+        select * from user where user_id = #{userId}
+    </select>
+
+    <select id="findUserByUsername" resultType="com.shenzc.Entity.User">
+          select * from user where username = #{username}
+    </select>
+
+    <select id="updateBasicUser">
+        update user
+        set password = #{password} ,head = #{head} ,birthday = #{birthday}
+        where user_id = #{userId}
+    </select>
+
+    <select id="findArticleByTitle" resultType="com.shenzc.Entity.Article">
+        select * from article where title = #{title}
+    </select>
+
+</mapper>

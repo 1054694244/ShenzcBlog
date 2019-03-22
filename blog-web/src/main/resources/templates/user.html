@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset = "UTF-8" />
+    <title>基本信息</title>
+
+    <!-- 引入easyui -->
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/default/easyui.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/themes/icon.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/easyui/demo/demo.css}" />
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/plugins/easyui/jquery.easyui.min.js}"></script>
+
+    <!--引入本地的js-->
+
+</head>
+<body>
+
+<div align="center">
+    <div class="easyui-panel" title="基本信息" style="width:50%;height:100% ; padding:10px;">
+        <form id="ff" action="/updateBasicUser" method="post" enctype="multipart/form-data">
+            <table align="center">
+                <tr>
+                    <td>ID:</td>
+                    <td><input name="userId" readonly="readonly" th:value="${user.userId}" class="f1 easyui-textbox" style="width: 250px"></input></td>
+                <tr>
+                <tr>
+                    <td>用户名:</td>
+                    <td><input name="username" readonly="readonly" th:value="${user.username}" class="f1 easyui-textbox" style="width: 250px"></input></td>
+                <tr>
+                    <td>密码:</td>
+                    <td><input name="password" id="password" th:value="${user.password}" class="f1 easyui-textbox" style="width: 250px;color: #af362c"></input></td>
+                    <!--<td><input type="button" onclick="editPassword()" value="修改密码" class="easyui-linkbutton"></input></td>-->
+                </tr>
+                <tr>
+                    <td>头像:</td>
+                    <td><input name="head"  th:value="${user.head}" class="f1 easyui-filebox" style="width: 250px;color: #af362c"></input></td>
+                    <td><img th:src="@{'http://shenzc.blog.com/image/'+${user.head}}" width="30px" height="30px"/></td>
+                </tr>
+                <tr>
+                    <td>创建时间:</td>
+                    <td><input name="createTime" th:value="${user.createTime}" readonly="readonly" class="f1 easyui-textbox" style="width: 250px;color: red"></input></td>
+                </tr>
+                <tr>
+                    <td>生日:</td>
+                    <td><input name="birthday"  th:value="${user.birthday}" class="f1 easyui-datebox" style="width: 250px;color: #af362c"></input></td>
+                </tr>
+                <tr>
+                    <td>是否是会员:</td>
+                    <td><input name="isSuper" th:value="${user.isSupper}" readonly="readonly" class="f1 easyui-textbox" style="width: 250px;color: red"></input></td>
+                </tr>
+                <tr>
+                    <td>会员到期时间:</td>
+                    <td><input name="superTime" th:value="${user.supperTime}" readonly="readonly" class="f1 easyui-textbox" style="width: 250px;color: red"></input></td>
+                </tr>
+                <tr align="center">
+                    <td></td>
+                    <td><input type="submit" value="修改"></input></td>
+                </tr>
+            </table>
+        </form>
+        <div align="center" style="margin-top: 50px">
+            <a th:href="@{/findFollowUser/(id=${user.userId})}"  class="easyui-linkbutton">查看关注的人</a>
+            <a th:href="@{/findFollowArticle/(id=${user.userId})}"   class="easyui-linkbutton">查看关注的文章</a>
+            <a th:href="@{/basicUser/(id=${user.userId})}"  class="easyui-linkbutton">个人主页</a>
+            <a th:href="@{/vip}"   class="easyui-linkbutton">充值超级会员</a>
+        </div>
+    </div>
+</div>
+<span id="id" th:value="${user.userId}"></span>
+
+
+
+<script type="text/javascript">
+
+</script>
+
+</body>
+</html>
+
+
