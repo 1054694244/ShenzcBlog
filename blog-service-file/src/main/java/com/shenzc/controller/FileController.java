@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.HashMap;
@@ -19,15 +20,24 @@ import java.util.Map;
  * @author shenzc
  * @create 2019-01-16-11:01
  */
-@Controller
+@RestController
 public class FileController {
 
     @Autowired
     private FileService fileService;
 
 
+    /**
+     * 通过作者ID查询所有文件
+     * @param fileId ：文件ID
+     * @param id ：作者ID
+     * @param fileTitle ：文件标题
+     * @param username ：作者姓名
+     * @param rows ：每页行数
+     * @param page : 第几页
+     * @return
+     */
     @RequestMapping("/findAllFileById")
-    @ResponseBody
     public Object findAllFileById(String fileId, String id, String fileTitle,String username,int rows,int page){
         Page<com.shenzc.Entity.File> filePage = PageHelper.startPage(page, rows);
         List<com.shenzc.Entity.File> fileList = fileService.findAllFileById(fileId, id, fileTitle,username);
@@ -37,8 +47,17 @@ public class FileController {
         return map;
     }
 
+
+    /**
+     * 查询所有文件
+     * @param fileId ：文件ID
+     * @param fileTitle ：文件标题
+     * @param username ：作者姓名
+     * @param rows ：每页行数
+     * @param page ：第几页
+     * @return
+     */
     @RequestMapping("/findAllFile")
-    @ResponseBody
     public Object findAllFile(String fileId, String fileTitle,String username,int rows,int page){
         Page<com.shenzc.Entity.File> filePage = PageHelper.startPage(page, rows);
         List<com.shenzc.Entity.File> fileList = fileService.findAllFile(fileId, fileTitle,username);
@@ -48,14 +67,24 @@ public class FileController {
         return map;
     }
 
+
+    /**
+     * 通过文件ID删除文件
+     * @param id ：文件ID
+     * @return
+     */
     @RequestMapping("/deleteFile")
-    @ResponseBody
     public Blog deleteFile(String id){
         return fileService.deleteFile(id);
     }
 
+
+    /**
+     * 通过文件ID查询一个文件
+     * @param id ：文件ID
+     * @return
+     */
     @RequestMapping("/findFileByFileId")
-    @ResponseBody
     public File findFileByFileId(String id){
         return fileService.findFileByFileId(id);
     }

@@ -2,6 +2,7 @@ package com.shenzc.service;
 
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.shenzc.CommonUtils.BlogUtils;
 import com.shenzc.CommonUtils.FormatDateUtils;
 import com.shenzc.CommonUtils.JsonUtils;
 import com.shenzc.Entity.Article;
@@ -26,12 +27,23 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
-    //根据条件查询所有用户
+
+    /**
+     * 查询所有用户
+     * @param userId ：用户ID
+     * @param username ：用户名
+     * @return
+     */
     public List<User> findAllUser(String userId, String username) {
         return userDao.findAllUser(userId,username);
     }
 
-    //添加用户
+
+    /**
+     * 添加用户
+     * @param user ：用户
+     * @return
+     */
     public Blog addUser(User user) {
         user.setActive("N");
         user.setCreateTime(new Date().toString());
@@ -47,57 +59,57 @@ public class UserService {
         }
     }
 
-    //编辑用户
+
+    /**
+     * 通过用户ID修改用户
+     * @param user ：用户
+     * @param id ：用户ID
+     * @return
+     */
     public Blog updateUser(User user, String id) {
         Integer count = userDao.update(user, new EntityWrapper<User>().eq("user_id", id));
-        if (count > 0) {
-            return new Blog(true, "跟新成功");
-        } else {
-            return new Blog(false, "跟新失败");
-        }
+        return BlogUtils.blog(count,"更新成功","跟新失败");
     }
 
-    //删除用户
+
+
+
+    /**
+     * 通过用户ID删除用户
+     * @param id ：用户ID
+     * @return
+     */
     public Blog deleteUser(String id) {
         Integer count = userDao.delete(new EntityWrapper<User>().eq("user_id", id));
-        if (count > 0) {
-            return new Blog(true, "删除成功");
-        } else {
-            return new Blog(false, "删除失败");
-        }
+        return BlogUtils.blog(count,"删除成功","删除失败");
     }
 
-    //按条件查询
-    public List<User> findByCondition(String userId, String username) {
-        List<User> userList = userDao.selectList(new EntityWrapper<User>().
-                eq("user_id", userId).
-                eq("username", username));
-        return userList;
-    }
 
-    //登陆
-    public Blog login(User user) {
-        List<User> userList = userDao.selectList(new EntityWrapper<User>().
-                eq("username", user.getUsername()).
-                eq("password", user.getPassword()));
-        if (userList != null && userList.size() != 0) {
-            return new Blog(true, "登陆成功", userList);
-        } else {
-            return new Blog(false, "登陆失败");
-        }
-    }
-
-    //通过用户ID查询用户
+    /**
+     * 通过用户ID查找用户
+     * @param id ：用户ID
+     * @return
+     */
     public User findUserById(String id){
         return userDao.selectUserById(id);
     }
 
-    //修改用户信息
+
+    /**
+     * 修改用户基本信息
+     * @param user ：用户
+     */
     public void updateBasicUser(User user){
         userDao.updateBasicUser(user.getPassword(),user.getHead(),user.getBirthday(),user.getUserId());
     }
 
-    //查询关注的人
+
+
+    /**
+     * 查询用户关注的人
+     * @param userId ：用户ID
+     * @return
+     */
     public List<User> findFollowUser(String userId){
         String userJosn = userDao.selectUserById(userId).getFollow();
         List<MyArticleJson> userList = JsonUtils.jsonToList(userJosn, MyArticleJson.class);
@@ -113,7 +125,13 @@ public class UserService {
         }
     }
 
-    //查询关注的文章
+
+
+    /**
+     * 查询用户关注的文章
+     * @param userId ：用户ID
+     * @return
+     */
     public List<Article> findFollowArtcle(String userId){
         String articleJson = userDao.selectUserById(userId).getArticle();
         List<MyArticleJson> userList = JsonUtils.jsonToList(articleJson, MyArticleJson.class);
@@ -129,7 +147,14 @@ public class UserService {
         }
     }
 
-    //取消关注人
+
+    /**
+     * 取消关注某一个人
+     * 登陆用户的FollowNum字段-1（表示当前用户关注的人少一个）
+     * 被取消关注的人的isFollow字段-1（表示被取消关注的那个人的被关注人数少了一个）
+     * @param userId ：取消关注的那个人的ID
+     * @param loginId ：登陆用户的ID
+     */
     public void cancelFollow(String userId,String loginId){
         User user = userDao.selectUserById(loginId);
         User user1 = userDao.selectUserById(userId);
@@ -146,7 +171,14 @@ public class UserService {
         userDao.update(user1,new EntityWrapper<User>().eq("user_id",userId));
     }
 
-    //取消关注文章
+
+    /**
+     * 取消关注一遍文章
+     * user表中的articleNum字段-1（表示关注的文章数少一个）
+     * article表中的Goods字段-1（表示article的关注的人少了一个）（在controller中实现，此处不实现）
+     * @param article ：文章ID
+     * @param loginId ：登陆用户的ID
+     */
     public void cancelArticle(Article article,String loginId){
         User user = userDao.selectUserById(loginId);
         user.setArticleNum(user.getArticleNum()-1);
@@ -159,8 +191,15 @@ public class UserService {
         user.setArticle(articleJson);
         userDao.update(user,new EntityWrapper<User>().eq("user_id",loginId));
     }
-    
-    //关注人
+
+
+    /**
+     * 关注一个人
+     * 登陆的人的user表中的Follow字段+1（表示关注的人多了一个）
+     * 被关注的人的user表中的isFollow字段+1（表示被关注的人多了一个粉丝）
+     * @param loginId ：登陆用户的ID
+     * @param userId : 用户ID
+     */
     public void updateUser(String loginId,String userId){
         User user = userDao.selectUserById(userId);
         User loginUser = userDao.selectUserById(loginId);
@@ -181,7 +220,14 @@ public class UserService {
         userDao.update(user,new EntityWrapper<User>().eq("user_id",userId));
     }
 
-    //关注文章
+
+    /**
+     * 关注一边文章
+     * 用户登陆的user表中articleNum字段+1（表示关注的文章多了一遍）
+     * 被关注的文章article表中的goods字段+1（表示关注的文章粉丝多了一个）（此处不实现，在controller中实现）
+     * @param loginId
+     * @param article
+     */
     public void updateUserArticle(String loginId,Article article){
         User loginUser = userDao.selectUserById(loginId);
         String articleJson = loginUser.getArticle();
@@ -199,14 +245,14 @@ public class UserService {
         userDao.update(loginUser,new EntityWrapper<User>().eq("user_id",loginId));
     }
 
-/**
- * Calendar curr = Calendar.getInstance()
- *
- * curr.set(Calendar.YEAR,curr.get(Calendar.YEAR)+1);
- *
- * Date date=curr.getTime();
- */
-    //充值超级会员
+
+    /**
+     * 充值超值会员
+     * @param id ：用户ID
+     * @param vip : 充值的vip是什么等级的
+     * @return
+     * @throws ParseException
+     */
     public Blog vip(String id,String vip) throws ParseException {
         User user = userDao.selectUserById(id);
         String s = null;
@@ -240,11 +286,7 @@ public class UserService {
         }
         user.setSupperTime(s);
         Integer integer = userDao.update(user, new EntityWrapper<User>().eq("user_id", id));
-        if(integer>0){
-            return new Blog(true,"充值成功");
-        }else {
-            return new Blog(false,"充值失败");
-        }
+        return BlogUtils.blog(integer,"充值成功","充值失败");
     }
 
 }

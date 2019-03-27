@@ -26,6 +26,15 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
+    /**
+     * 分页查询所有分类
+     * @param rows ：每页行数
+     * @param page ：第几页
+     * @param categoryName ：分类名称
+     * @param categoryId ：分类ID
+     * @return
+     */
     @RequestMapping("/findAllCategoryPage")
     public Object findAllCategoryPage(int rows,int page,String categoryName,String categoryId){
         Page<Category> categoryPage = PageHelper.startPage(page,rows);
@@ -36,29 +45,51 @@ public class CategoryController {
         return map;
     }
 
+
+    /**
+     * 查询所有分类
+     * @return
+     */
     @RequestMapping("/findAllCategory")
     public List<Category> findAllCategory(){
         List<Category> categoryList = categoryService.findAllCategory();
         return categoryList;
     }
 
+
+    /**
+     * 添加一个分类
+     * @param category
+     * @return
+     */
     @RequestMapping("/addCategory")
     public Blog addCategory(@RequestBody Category category){
         return categoryService.addCategory(category);
     }
+
+
+    /**
+     * 跟新分类
+     * @param category ：分类
+     * @param id ：分类ID
+     * @return
+     */
     @RequestMapping("/updateCategory")
     public Blog updateCategory(@RequestBody Category category ,String id){
         return categoryService.updateCategory(category,id);
     }
+
+
+    /**
+     * 通过分类ID删除一个分类
+     * @param id ：分类ID
+     * @return
+     */
     @RequestMapping("/deleteCategory")
     public Blog deleteCategory(String id){
         return categoryService.deleteCategory(id);
     }
 
-    @RequestMapping("/searchCategory")
-    public List<Category> searchCategory(String categoryId,String categoryname){
-        return categoryService.findByCondition(categoryId,categoryname);
-    }
 
 
 }

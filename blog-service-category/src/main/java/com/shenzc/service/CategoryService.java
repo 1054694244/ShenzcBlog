@@ -21,16 +21,32 @@ public class CategoryService {
     @Autowired
     private CategoryDao categoryDao;
 
+
+    /**
+     * 查询所有分类
+     * @param categoryName ：分类名称
+     * @param categoryId ：分类ID
+     * @return
+     */
     public List<Category> findAllCategoryPage(String categoryName,String categoryId){
-        //return categoryDao.selectList(new EntityWrapper<Category>());
         return categoryDao.findAllCategory(categoryName,categoryId);
     }
 
 
+    /**
+     * 查询所有分类
+     * @return
+     */
     public List<Category> findAllCategory(){
         return categoryDao.findAllCategory(null,null);
     }
 
+
+    /**
+     * 添加一个分类
+     * @param category
+     * @return
+     */
     public Blog addCategory(Category category){
         category.setIsDelete("N");
         category.setCreateTime(new Date());
@@ -44,6 +60,13 @@ public class CategoryService {
         }
     }
 
+
+    /**
+     * 跟新一个分类
+     * @param category ：分类
+     * @param id ：分类ID
+     * @return
+     */
     public Blog updateCategory(Category category,String id){
         Integer count = categoryDao.update(category, new EntityWrapper<Category>().eq("category_id", id));
         if(count>0){
@@ -53,6 +76,12 @@ public class CategoryService {
         }
     }
 
+
+    /**
+     * 删除一个分类
+     * @param id ：分类ID
+     * @return
+     */
     public Blog deleteCategory(String id){
         Integer count = categoryDao.delete(new EntityWrapper<Category>().eq("category_id",id));
         if(count>0){
@@ -62,13 +91,6 @@ public class CategoryService {
         }
     }
 
-    //按条件查询
-    public List<Category> findByCondition(String categoryId,String categoryName){
-        List<Category> categoryList = categoryDao.selectList(new EntityWrapper<Category>().
-                eq("category_id", categoryId).
-                eq("category_name", categoryName));
-        return categoryList;
-    }
 
 
 }

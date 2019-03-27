@@ -16,6 +16,12 @@ import java.util.List;
 @Repository
 public interface CategoryDao extends BaseMapper<Category> {
 
+    /**
+     * 查询所有分类
+     * @param categoryName ：分类名称（可以为null）
+     * @param categoryId ：分类ID（可以为null）
+     * @return
+     */
     List<Category> findAllCategory(@Param("categoryName") String categoryName,
                                    @Param("categoryId") String categoryId);
 

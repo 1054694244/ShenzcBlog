@@ -28,6 +28,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    /**
+     *
+     * @param rows
+     * @param page
+     * @param userId
+     * @param username
+     * @return
+     */
     @RequestMapping("/findAllUser")
     public Object findAllUser(int rows, int page,String userId,String username) {
         Page<User> userPage = PageHelper.startPage(page, rows);
