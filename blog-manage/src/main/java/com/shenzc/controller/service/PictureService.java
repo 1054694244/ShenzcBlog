@@ -1,7 +1,9 @@
 package com.shenzc.controller.service;
 
 import com.shenzc.Entity.Picture;
+import com.shenzc.commonEntity.Blog;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -20,4 +22,6 @@ public interface PictureService {
     @RequestMapping("/findAllPictureByCategory")
     List<Picture> findAllPictureByCategory(@RequestParam(value = "category") String category);
 
+    @RequestMapping("/editPicture")
+    Blog editPicture(@RequestBody Picture picture);
 }

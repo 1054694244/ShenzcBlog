@@ -13,10 +13,16 @@
 
     <!--引入本地js文件-->
     <!--<script type="text/javascript" th:src="@{/js/url.js}"></script>-->
-
+    <script type="text/javascript">
+        $.ajax({
+            url : '/findAllActivePicture',
+            type : 'GET'
+        })
+    </script>
 </head>
 <body>
 
+<!--
 <table id="dg" title="图片管理" class="easyui-datagrid" style="width:auto;height:auto"
        url="/findAllActivePicture"
        toolbar="#tb"
@@ -29,7 +35,7 @@
         <th field="category" width="50">分类</th>
         <th field="url" width="50">指向地址</th>
         <th field="createTime" width="50">创建时间</th>
-        <!--<th field="#" width="50" data-options="formatter:operation">替换图片</th>-->
+        &lt;!&ndash;<th field="#" width="50" data-options="formatter:operation">替换图片</th>&ndash;&gt;
     </tr>
     </thead>
 </table>
@@ -99,12 +105,88 @@
         });
     }
 
+</script>
+-->
+
+<div align="center" >
+    <div th:each="picture: ${session.pictureList}" style="width: 600px;height: 100px;border:1px solid #1e282c ;padding: 15px;"  >
+
+        <div style="float: left">
+            <div th:text="${picture.category}" style="font-size: 15px;color: rgba(3,3,4,0.96)" align="left"></div>
+            <div th:text="${picture.title}" style="font-size: 15px;color: rgba(3,3,4,0.96)" align="left"></div>
+            <div th:text="${picture.url}" style="font-size: 15px;color: rgba(3,3,4,0.96)" align="left"></div>
+            <div th:text="${picture.createTime}" style="font-size: 15px;color: rgba(3,3,4,0.96)" align="left"></div>
+        </div>
+        <div style="float: left">
+            <img th:src="@{'http://shenzc.blog.com/image/'+${picture.picture}}" width="100px" height="75px"/>
+        </div>
+        <div>
+            <button  class="btn" th:onclick="editPicture([[${picture}]]);" >修改图片</button>
+        </div>
+    </div>
+</div>
 
 
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <div class="ftitle">图片信息</div>
+        <form id="fm"  method="post" enctype="multipart/form-data">
+            <table align="center">
+                <tr>
+                    <td>图片ID:</td>
+                    <td><input name="pictureId" readonly="readonly" class="f1 easyui-textbox" required="required"></input></td>
+                </tr>
+                <tr>
+                    <td>图片标题:</td>
+                    <td><input name="title" class="f1 easyui-textbox" required="required"></input></td>
+                </tr>
+                <tr>
+                    <td>图片分类:</td>
+                    <td><input name="category" id="category" class="f1 easyui-textbox" required="required"></input></td>
+                </tr>
+                <tr>
+                    <td>图片url:</td>
+                    <td><input name="url" class="f1 easyui-textbox" required="required"></input></td>
+                </tr>
+                <tr>
+                    <td>图片:</td>
+                    <td><input name="picture" class="f1 easyui-filebox" required="required"></input></td>
+                </tr>
+            </table>
+        </form>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="submit()">保存</a>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+    function editPicture(picture){
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit Picture');
+        $('#fm').form('load',picture);
+    }
+
+
+   function submit(){
+       $('#fm').form('submit',{
+           url: '/editPicture',
+           onSubmit: function(){
+               return $(this).form('validate');
+           },
+           success :function (data) {
+               var data = eval('('+data+')');
+               if(data.success){
+                   location.reload(true)
+               }else {
+                   alert("修改失败")
+               }
+           }
+       });
+
+    }
 
 </script>
-
-
 
 </body>
 </html>

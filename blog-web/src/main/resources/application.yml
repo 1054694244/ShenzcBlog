@@ -48,6 +48,10 @@ spring:
 
   thymeleaf:
     cache: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
 
 eureka:
   instance:
@@ -91,5 +95,15 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
+
+
+
+
+
+
+
+
+
+
 
 
