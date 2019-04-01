@@ -261,11 +261,11 @@ public class UserService {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             if("12".equals(vip)){
-                calendar.add(Calendar.YEAR,+1);
+                calendar.add(Calendar.YEAR,1);
             }else if("3".equals(vip)){
-                calendar.add(Calendar.MONTH,+3);
+                calendar.add(Calendar.MONTH,3);
             }else if("1".equals(vip)){
-                calendar.add(Calendar.MONTH,+1);
+                calendar.add(Calendar.MONTH,1);
             }
             Date date = calendar.getTime();
             s = FormatDateUtils.formatDate(date);
@@ -275,11 +275,11 @@ public class UserService {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             if("12".equals(vip)){
-                calendar.add(Calendar.YEAR,+1);
+                calendar.add(Calendar.YEAR,1);
             }else if("3".equals(vip)){
-                calendar.add(Calendar.MONTH,+3);
+                calendar.add(Calendar.MONTH,3);
             }else if("1".equals(vip)){
-                calendar.add(Calendar.MONTH,+1);
+                calendar.add(Calendar.MONTH,1);
             }
             Date date1 = calendar.getTime();
             s = FormatDateUtils.formatDate(date1);
