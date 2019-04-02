@@ -324,6 +324,13 @@ public class UserService {
         }
         user.setSupperTime(s);
         Integer integer = userDao.update(user, new EntityWrapper<User>().eq("user_id", id));
+        try{
+            redisTemplate.delete("user:"+id);
+            redisTemplate.opsForValue().set("user:"+id,user);
+            System.out.println("修改了user缓存");
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         return BlogUtils.blog(integer,"充值成功","充值失败");
     }
 
