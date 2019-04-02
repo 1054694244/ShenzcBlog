@@ -48,6 +48,8 @@ spring:
 
   thymeleaf:
     cache: false
+  redis:
+    host: 127.0.0.1
 
 eureka:
   instance:
@@ -91,5 +93,4 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-
 

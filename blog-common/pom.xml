@@ -27,6 +27,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--redis模块-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <!--eureka模块-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

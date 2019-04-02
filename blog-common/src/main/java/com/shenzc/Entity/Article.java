@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @TableName("article")
-public class Article {
+public class Article implements Serializable {
 
       private String articleId;
 

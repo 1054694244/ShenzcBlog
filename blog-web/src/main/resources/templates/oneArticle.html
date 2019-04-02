@@ -63,7 +63,7 @@
             <span th:text="${reply.username}" ></span>:
             <span th:text="${reply.content}" ></span>
             (<span th:text="${reply.createTime}"></span>)
-            <a href="#" onclick="reply(1)" class="easyui-linkbutton">回复</a>
+            <a href="#" th:onclick="reply([[${reply.replyId}]])" class="easyui-linkbutton">回复</a>
             <span id="replyId" hidden="hidden" th:value="${reply.replyId}" ></span>
             <div th:each="replyP : ${reply.replyList}" style="color: #8aa4af;font-size: 4px">
                 &nbsp; &nbsp; &nbsp; &nbsp;
@@ -85,9 +85,6 @@
         if($("#isLogin").attr("value") == null){
             alert("不能评论请先登陆");
             return
-        }
-        if(num != 0){
-            num = $("#replyId").attr("value")
         }
         var str = document.getElementById("replyContent").value
         if(str == null || str == ''){

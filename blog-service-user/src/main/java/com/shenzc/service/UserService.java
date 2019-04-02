@@ -12,6 +12,8 @@ import com.shenzc.commonEntity.MyArticleJson;
 import com.shenzc.mapper.UserDao;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -26,6 +28,9 @@ public class UserService {
 
     @Autowired
     private UserDao userDao;
+    @Autowired
+    @Qualifier("userRedisTemplate")
+    private RedisTemplate<Object,User> redisTemplate;
 
 
     /**
@@ -76,11 +81,20 @@ public class UserService {
 
     /**
      * 通过用户ID删除用户
+     * 如果缓存中有这个用户的数据，删除缓存中的此数据
      * @param id ：用户ID
      * @return
      */
     public Blog deleteUser(String id) {
         Integer count = userDao.delete(new EntityWrapper<User>().eq("user_id", id));
+        User jsonUser = redisTemplate.opsForValue().get("user:"+id);
+        if(jsonUser != null){
+            try{
+                redisTemplate.delete("user:"+id);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
         return BlogUtils.blog(count,"删除成功","删除失败");
     }
 
@@ -91,16 +105,40 @@ public class UserService {
      * @return
      */
     public User findUserById(String id){
-        return userDao.selectUserById(id);
+        try{
+            User jsonUser = redisTemplate.opsForValue().get("user:"+id);
+            if(jsonUser == null){
+                User user = userDao.selectUserById(id);
+                redisTemplate.opsForValue().set("user:"+id,user);
+                return user;
+            }else {
+                System.out.println("user调用了缓存");
+                return jsonUser;
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
 
     /**
      * 修改用户基本信息
+     * 每次修改用户信息，如果缓存中有这个数据才修改，否则不修改
      * @param user ：用户
      */
     public void updateBasicUser(User user){
         userDao.updateBasicUser(user.getPassword(),user.getHead(),user.getBirthday(),user.getUserId());
+        User jsonUser = redisTemplate.opsForValue().get("user:"+user.getUserId());
+        if(jsonUser != null){
+            User user1 = userDao.selectUserById(user.getUserId());
+            try{
+                redisTemplate.delete("user:"+user.getUserId());
+                redisTemplate.opsForValue().set("user:"+user.getUserId(),user1);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
 

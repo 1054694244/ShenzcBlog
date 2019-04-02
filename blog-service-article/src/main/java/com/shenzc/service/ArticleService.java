@@ -2,11 +2,14 @@ package com.shenzc.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.shenzc.CommonUtils.FormatDateUtils;
+import com.shenzc.Entity.Category;
 import com.shenzc.Entity.Reply;
 import com.shenzc.commonEntity.Blog;
 import com.shenzc.Entity.Article;
 import com.shenzc.mapper.ArticleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -23,6 +26,9 @@ public class ArticleService {
 
     @Autowired
     private ArticleMapper articleMapper;
+    @Autowired
+    @Qualifier("articleRedisTemplate")
+    RedisTemplate<Object,Article> redisTemplate;
 
     /**
      * 通过作者ID查询所有文章
@@ -54,21 +60,51 @@ public class ArticleService {
 
     /**
      * 通过分类ID查询所有文章
+     * 通过分类ID查询文章属于前端主页，访问量较大，将查询的结果存入缓存之中
      * @param categoryId : 分类ID
      * @return
      */
     public List<Article> findArticleByCategoryId(String categoryId){
-        return articleMapper.findArticleByCategoryId(categoryId);
+        try{
+            List<Article> jsonArticleList = redisTemplate.opsForList().range("articleList:"+categoryId+"", 0, -1);
+            if(jsonArticleList.size()==0 || jsonArticleList == null){
+                List<Article> articleList = articleMapper.findArticleByCategoryId(categoryId);
+                redisTemplate.opsForList().rightPushAll("articleList:"+categoryId+"",articleList);
+                return articleList;
+            }else {
+                System.out.println("aritilceList调用了缓存");
+                return jsonArticleList;
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+
+
     }
 
 
     /**
      * 通过文章ID查询文章
+     * 将查询出来的文章存入缓存之中
      * @param articleId : 文章ID
      * @return
      */
     public Article findArticleByArticleId(String articleId){
-        return articleMapper.findArticleByArticleId(articleId);
+        try{
+            Article jsonArticle = redisTemplate.opsForValue().get("article:"+articleId);
+            if(jsonArticle == null){
+                Article article = articleMapper.findArticleByArticleId(articleId);
+                redisTemplate.opsForValue().set("article:"+articleId,article);
+                return article;
+            }else {
+                System.out.println("aritle调用了缓存");
+                return jsonArticle;
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
 
@@ -102,6 +138,12 @@ public class ArticleService {
         if(isPass == null){
             //修改文章之后，重新进行审核
             article.setIsPass("3");
+            try{
+                redisTemplate.delete("article:"+articleId);
+                redisTemplate.delete("replyList:"+articleId);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
         }else {
             article.setIsPass(isPass);
         }
@@ -124,6 +166,11 @@ public class ArticleService {
      */
     public Blog editArticleNoPass(Article article,String articleId){
         Integer integer = articleMapper.update(article, new EntityWrapper<Article>().eq("article_id", articleId));
+        try{
+            redisTemplate.opsForValue().set("article:"+articleId,article);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         if(integer>0){
             return new Blog(true,"修改成功");
         }else {
@@ -140,6 +187,15 @@ public class ArticleService {
      */
     public Blog deleteArticleByarticleId(String ArticleId){
         Integer integer = articleMapper.delete(new EntityWrapper<Article>().eq("article_id",ArticleId));
+        try{
+            Article article = redisTemplate.opsForValue().get("article:" + ArticleId);
+            if(article != null){
+                redisTemplate.delete("article:" + ArticleId);
+                redisTemplate.delete("replyList:"+ArticleId);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         if(integer>0){
             return new Blog(true,"删除成功");
         }else {

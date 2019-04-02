@@ -33,7 +33,7 @@
         <span th:if="${not #lists.isEmpty(session.user)}">
         <a th:href="@{/basicUser/(id=${session.user.userId})}" target="_blank" class="easyui-linkbutton" >个人主页</a>
         <a th:href="@{/user/(id=${session.user.userId})}" target="_blank" class="easyui-linkbutton" >基本信息</a>
-        <a href="/article"  target="_blank" class="easyui-linkbutton">博客管理</a>
+        <a href="/article" target="_blank" class="easyui-linkbutton">博客管理</a>
         <a href="/write" target="_blank" class="easyui-linkbutton">写博客</a>
         <a href="/file"  target="_blank" class="easyui-linkbutton">文件管理</a>
         <a href="/upload" target="_blank" class="easyui-linkbutton">上传资源</a>
@@ -50,7 +50,7 @@
 
     <div data-options="region:'west'"  title="选择分类" style="width: 15%;margin-right: 10px;">
         <div class="easyui-panel" data-options="fit:true" style="background-image: url('http://shenzc.blog.com/image/008.jpg')">
-            <ul id="mytree" class="easyui-tree" data-options="animate:true,lines:true"></ul>
+            <ul id="mytree" data-options="animate:true,lines:true"></ul>
         </div>
     </div>
 

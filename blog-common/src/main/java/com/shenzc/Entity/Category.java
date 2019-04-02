@@ -3,6 +3,7 @@ package com.shenzc.Entity;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
