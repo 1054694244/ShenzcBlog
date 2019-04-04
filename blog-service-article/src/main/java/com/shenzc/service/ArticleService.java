@@ -1,21 +1,21 @@
 package com.shenzc.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.shenzc.CommonUtils.BlogUtils;
 import com.shenzc.CommonUtils.FormatDateUtils;
 import com.shenzc.Entity.Category;
 import com.shenzc.Entity.Reply;
 import com.shenzc.commonEntity.Blog;
 import com.shenzc.Entity.Article;
 import com.shenzc.mapper.ArticleMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author shenzc
@@ -29,7 +29,8 @@ public class ArticleService {
     @Autowired
     @Qualifier("articleRedisTemplate")
     RedisTemplate<Object,Article> redisTemplate;
-
+    @Autowired
+    RabbitTemplate rabbitTemplate;
     /**
      * 通过作者ID查询所有文章
      * @param authorId ：作者ID
@@ -141,6 +142,7 @@ public class ArticleService {
             try{
                 redisTemplate.delete("article:"+articleId);
                 redisTemplate.delete("replyList:"+articleId);
+                redisTemplate.delete("articleList:"+article.getCategoryId()+"");
             }catch (Exception e){
                 System.out.println(e.getMessage());
             }
@@ -167,7 +169,7 @@ public class ArticleService {
     public Blog editArticleNoPass(Article article,String articleId){
         Integer integer = articleMapper.update(article, new EntityWrapper<Article>().eq("article_id", articleId));
         try{
-            redisTemplate.opsForValue().set("article:"+articleId,article);
+            redisTemplate.delete("article:"+articleId);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -181,26 +183,31 @@ public class ArticleService {
 
 
     /**
-     * 通过文章ID删除文章
+     * 通过文章ID删除文章，删除文章的同时，
+     * 1.修改Myarticle字段以及num字段
+     * 2.如果用户有关注这一篇文章，就需要将用户的article字段修改，article_num字段-1
+     * 3.清除单个文章以及他的评论的缓存
+     * 4.清除articleList缓存
      * @param ArticleId : 文章ID
      * @return
      */
     public Blog deleteArticleByarticleId(String ArticleId){
+        Article article1 = articleMapper.findArticleByArticleId(ArticleId);
         Integer integer = articleMapper.delete(new EntityWrapper<Article>().eq("article_id",ArticleId));
+        rabbitTemplate.convertAndSend("exchange.user","user.article",article1);
+
         try{
             Article article = redisTemplate.opsForValue().get("article:" + ArticleId);
             if(article != null){
                 redisTemplate.delete("article:" + ArticleId);
                 redisTemplate.delete("replyList:"+ArticleId);
+                redisTemplate.delete("articleList:"+article1.getCategoryId()+"");
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-        if(integer>0){
-            return new Blog(true,"删除成功");
-        }else {
-            return new Blog(false,"删除失败");
-        }
+
+        return BlogUtils.blog(integer,"删除失败","删除成功");
     }
 
 
@@ -237,10 +244,12 @@ public class ArticleService {
 
     /**
      * 添加文章
+     * 添加文章的同时，要告诉user服务，如果用户有redis缓存，要重新设置
      * @param article ：文章
      * @return
      */
     private int addArticle(Article article){
+        //rabbitTemplate.convertAndSend("exchange.user","user.basic",article);
         article.setArticleId(UUID.randomUUID().toString());
         String date = FormatDateUtils.formatDateTime(new Date());
         article.setCreateTime(date);

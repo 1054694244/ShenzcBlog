@@ -107,15 +107,17 @@ public class ArticleController<controller> {
         Blog blog = articleService.submitArticle(article);
         //添加一遍文章的同时，修改user表中的myarticleNum字段+1
         //添加文章之后，跟新user表中的myArticle字段
-        updateUser(article);
+        updateMyUser(article,loginId);
         return "article";
     }
 
-    public void updateUser(Article article){
-        User user = userService.findUserById(article.getAuthorId());
+    public void updateMyUser(Article article,String loginId){
+        User user = userService.findUserById(loginId);
         user.setMyArticleNum(user.getMyArticleNum()+1);
+        System.out.println(user);
         String articleJson = user.getMyArticle();
-        if(articleJson == "" || articleJson == null){
+        System.out.println(articleJson+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if(articleJson == "" || articleJson == null || "[]".equals(articleJson)){
             articleJson = "[{\"name\":\""+article.getTitle()+"\"}]";
         }else {
             List<MyArticleJson> myJsonList = JsonUtils.jsonToList(articleJson, MyArticleJson.class);

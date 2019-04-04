@@ -46,9 +46,18 @@ spring:
         login-password: password
       #排除一些静态资源，以提高效率
 
+  #thymeleaf模板配置，设置不缓存
   thymeleaf:
     cache: false
 
+  #rabbitmq连接配置
+  rabbitmq:
+    port: 5672
+    host: localhost
+    username: guest
+    password: guest
+
+#springCloud的客户端配置
 eureka:
   instance:
     prefer-ip-address: true # 注册服务的时候使用服务的ip地址
@@ -91,5 +100,4 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-
 

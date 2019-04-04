@@ -53,6 +53,14 @@ spring:
       max-file-size: 10MB
       max-request-size: 100MB
 
+  #rabbitmq连接配置
+  rabbitmq:
+    port: 5672
+    host: localhost
+    username: guest
+    password: guest
+
+
 eureka:
   instance:
     prefer-ip-address: true # 注册服务的时候使用服务的ip地址

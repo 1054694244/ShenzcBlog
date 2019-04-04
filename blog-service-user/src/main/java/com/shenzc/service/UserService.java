@@ -11,6 +11,8 @@ import com.shenzc.commonEntity.Blog;
 import com.shenzc.commonEntity.MyArticleJson;
 import com.shenzc.mapper.UserDao;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,6 +33,8 @@ public class UserService {
     @Autowired
     @Qualifier("userRedisTemplate")
     private RedisTemplate<Object,User> redisTemplate;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
     /**
@@ -87,25 +91,26 @@ public class UserService {
      */
     public Blog deleteUser(String id) {
         Integer count = userDao.delete(new EntityWrapper<User>().eq("user_id", id));
-        User jsonUser = redisTemplate.opsForValue().get("user:"+id);
+       /* User jsonUser = redisTemplate.opsForValue().get("user:"+id);
         if(jsonUser != null){
             try{
                 redisTemplate.delete("user:"+id);
             }catch (Exception e){
                 System.out.println(e.getMessage());
             }
-        }
+        }*/
         return BlogUtils.blog(count,"删除成功","删除失败");
     }
 
 
     /**
-     * 通过用户ID查找用户
+     * 通过用户ID查找用户,添加完之后修改缓存
      * @param id ：用户ID
      * @return
      */
+
     public User findUserById(String id){
-        try{
+        /*try{
             User jsonUser = redisTemplate.opsForValue().get("user:"+id);
             if(jsonUser == null){
                 User user = userDao.selectUserById(id);
@@ -118,7 +123,8 @@ public class UserService {
         }catch (Exception e){
             System.out.println(e.getMessage());
             return null;
-        }
+        }*/
+        return userDao.selectUserById(id);
     }
 
 
@@ -129,7 +135,7 @@ public class UserService {
      */
     public void updateBasicUser(User user){
         userDao.updateBasicUser(user.getPassword(),user.getHead(),user.getBirthday(),user.getUserId());
-        User jsonUser = redisTemplate.opsForValue().get("user:"+user.getUserId());
+        /*User jsonUser = redisTemplate.opsForValue().get("user:"+user.getUserId());
         if(jsonUser != null){
             User user1 = userDao.selectUserById(user.getUserId());
             try{
@@ -138,7 +144,7 @@ public class UserService {
             }catch (Exception e){
                 System.out.println(e.getMessage());
             }
-        }
+        }*/
     }
 
 
@@ -214,6 +220,7 @@ public class UserService {
      * 取消关注一遍文章
      * user表中的articleNum字段-1（表示关注的文章数少一个）
      * article表中的Goods字段-1（表示article的关注的人少了一个）（在controller中实现，此处不实现）
+     * 此处使用rabbitMq，将消息发送到exchange.article交换机中，然后通知article服务，进行操作。
      * @param article ：文章ID
      * @param loginId ：登陆用户的ID
      */
@@ -228,6 +235,9 @@ public class UserService {
         articleJson = JsonUtils.objectToJson(userList);
         user.setArticle(articleJson);
         userDao.update(user,new EntityWrapper<User>().eq("user_id",loginId));
+        /*Map<String,Object> map = new HashMap<>();
+        map.put("increaceGoods","increaceGoods");
+        rabbitTemplate.convertAndSend("exchange.article","article.goods",map);*/
     }
 
 
@@ -243,7 +253,7 @@ public class UserService {
         User loginUser = userDao.selectUserById(loginId);
         String followJson = loginUser.getFollow();
         loginUser.setFollowNum(loginUser.getFollowNum()+1);
-        if(followJson == "" || followJson == null){
+        if(followJson == "" || followJson == null ||"[]".equals(followJson)){
             followJson = "[{\"name\":\""+user.getUsername()+"\"}]";
         }else {
             List<MyArticleJson> myJsonList = JsonUtils.jsonToList(followJson, MyArticleJson.class);
@@ -263,6 +273,7 @@ public class UserService {
      * 关注一边文章
      * 用户登陆的user表中articleNum字段+1（表示关注的文章多了一遍）
      * 被关注的文章article表中的goods字段+1（表示关注的文章粉丝多了一个）（此处不实现，在controller中实现）
+     * 此处使用rabbitMq，将消息发送到exchange.article交换机中，然后通知article服务，进行操作。
      * @param loginId
      * @param article
      */
@@ -270,7 +281,7 @@ public class UserService {
         User loginUser = userDao.selectUserById(loginId);
         String articleJson = loginUser.getArticle();
         loginUser.setArticleNum(loginUser.getArticleNum()+1);
-        if(articleJson == "" || articleJson == null){
+        if(articleJson == "" || articleJson == null||"[]".equals(articleJson)){
             articleJson = "[{\"name\":\""+article.getTitle()+"\"}]";
         }else {
             List<MyArticleJson> myJsonList = JsonUtils.jsonToList(articleJson, MyArticleJson.class);
@@ -281,6 +292,9 @@ public class UserService {
         }
         loginUser.setArticle(articleJson);
         userDao.update(loginUser,new EntityWrapper<User>().eq("user_id",loginId));
+        /*Map<String,Object> map = new HashMap<>();
+        map.put("addGoods","addGoods");
+        rabbitTemplate.convertAndSend("exchange.article","article.goods",map);*/
     }
 
 
@@ -324,14 +338,66 @@ public class UserService {
         }
         user.setSupperTime(s);
         Integer integer = userDao.update(user, new EntityWrapper<User>().eq("user_id", id));
-        try{
+        /*try{
             redisTemplate.delete("user:"+id);
             redisTemplate.opsForValue().set("user:"+id,user);
             System.out.println("修改了user缓存");
         }catch (Exception e){
             System.out.println(e.getMessage());
-        }
+        }*/
         return BlogUtils.blog(integer,"充值成功","充值失败");
     }
+
+
+    /**
+     * 此处使用rabbitmq，当删除一遍文章的时间，如果有用户关注了这一篇文章，就取消关注此文章，还要修改MyArticle字段
+     * @param article
+     */
+    @RabbitListener(queues = "user.article")
+    public void cancelArticle(Article article){
+        List<User> userList = userDao.findAllUser(null, null);
+
+        //修改MyArticle字段和num字段
+        User author = userDao.selectUserById(article.getAuthorId());
+        String articleJson = author.getMyArticle();
+        author.setMyArticleNum(author.getMyArticleNum()-1);
+        List<MyArticleJson> myJsonList = JsonUtils.jsonToList(articleJson, MyArticleJson.class);
+        MyArticleJson myJson = new MyArticleJson();
+        myJson.setName(article.getTitle());
+        myJsonList.remove(myJson);
+        articleJson = JsonUtils.objectToJson(myJsonList);
+        author.setMyArticle(articleJson);
+        System.out.println(author);
+        userDao.update(author,new EntityWrapper<User>().eq("user_id",author.getUserId()));
+
+        //修改关注者的article字段
+        for (User user:userList) {
+            String jsonArticle = user.getArticle();
+            List<MyArticleJson> myArticleJsons = JsonUtils.jsonToList(jsonArticle, MyArticleJson.class);
+            if(myArticleJsons.size()!=0){
+                MyArticleJson myArticleJson = new MyArticleJson();
+                myArticleJson.setName(article.getTitle());
+                if(myArticleJsons.contains(myArticleJson)){
+                    myArticleJsons.remove(myArticleJson);
+                    jsonArticle = JsonUtils.objectToJson(myArticleJsons);
+                    user.setArticle(jsonArticle);
+                    user.setArticleNum(user.getArticleNum()-1);
+                    System.out.println(user);
+                    userDao.update(user,new EntityWrapper<User>().eq("user_id",user.getUserId()));
+                }
+            }
+        }
+    }
+
+/*    @RabbitListener(queues = "user.basic")
+    public void updateUserRedis(Article article){
+        try{
+            User user = userDao.selectUserById(article.getAuthorId());
+            redisTemplate.delete("user:"+article.getAuthorId());
+            redisTemplate.opsForValue().set("user:"+article.getAuthorId(),user);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }*/
 
 }
