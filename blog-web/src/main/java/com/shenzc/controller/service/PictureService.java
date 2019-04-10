@@ -24,4 +24,6 @@ public interface PictureService {
     @RequestMapping("/findAdPicture")
     List<Picture> findIndexPicture();
 
+    @RequestMapping("/findArticlePicture")
+    List<Picture> findArticlePicture();
 }

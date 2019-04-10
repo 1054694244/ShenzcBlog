@@ -36,4 +36,12 @@ public class PictureController {
         return pictureList;
     }
 
+    @RequestMapping("/findArticlePicture")
+    public List<Picture> findArticlePicture(HttpServletRequest request){
+        List<Picture> pictureList = pictureService.findArticlePicture();
+        request.getSession().setAttribute("pictureList",pictureList);
+        return pictureList;
+    }
+
+
 }

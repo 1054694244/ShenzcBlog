@@ -37,6 +37,12 @@ public class PictureController {
         return pictureList;
     }
 
+    @RequestMapping("/findArticlePicture")
+    public List<Picture> findArticlePicture(){
+        List<Picture> pictureList = pictureService.findArticlePicture();
+        return pictureList;
+    }
+
     @RequestMapping("/editPicture")
     public Blog editPicture(@RequestBody Picture picture){
         return pictureService.editPicture(picture);

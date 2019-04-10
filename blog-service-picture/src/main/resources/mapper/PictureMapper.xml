@@ -21,7 +21,14 @@
             select
             *
             from  picture
-            where category = '首页大广告'
+            where category = '首页大广告' and is_active = '1'
+    </select>
+
+    <select id="findArticlePicture" resultType="com.shenzc.Entity.Picture">
+            select
+            *
+            from  picture
+            where category = '文章侧边广告' and is_active = '1'
     </select>
 
 </mapper>

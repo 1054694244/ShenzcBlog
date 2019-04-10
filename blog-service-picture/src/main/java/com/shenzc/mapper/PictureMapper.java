@@ -22,4 +22,5 @@ public interface PictureMapper extends BaseMapper<Picture> {
 
     List<Picture> findIndexPicture();
 
+    List<Picture> findArticlePicture();
 }

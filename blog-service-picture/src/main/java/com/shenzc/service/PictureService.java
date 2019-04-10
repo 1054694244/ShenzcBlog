@@ -36,6 +36,10 @@ public class PictureService {
         return pictureMapper.findIndexPicture();
     }
 
+    public List<Picture> findArticlePicture(){
+        return pictureMapper.findArticlePicture();
+    }
+
 
     /**
      * 通过分类修改图片
