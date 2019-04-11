@@ -30,7 +30,9 @@
     </select>
 
     <select id="findArticleByTitle" resultType="com.shenzc.Entity.Article">
-        select * from article where title = #{title}
+        select *,user.username,user.head from article
+        left join user on user_id = author_id
+        where title = #{title}
     </select>
 
 </mapper>

@@ -136,18 +136,19 @@ public class ArticleService {
      * @return
      */
     public Blog editArticle(Article article,String articleId,String isPass){
+        Article managerArticle = articleMapper.findArticleByArticleId(articleId);
         if(isPass == null){
             //修改文章之后，重新进行审核
             article.setIsPass("3");
-            try{
-                redisTemplate.delete("article:"+articleId);
-                redisTemplate.delete("replyList:"+articleId);
-                redisTemplate.delete("articleList:"+article.getCategoryId()+"");
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
         }else {
             article.setIsPass(isPass);
+        }
+        try{
+            redisTemplate.delete("article:"+articleId);
+            redisTemplate.delete("replyList:"+articleId);
+            redisTemplate.delete("articleList:"+managerArticle.getCategoryId()+"");
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
         Integer integer = articleMapper.update(article, new EntityWrapper<Article>().eq("article_id", articleId));
         if(integer>0){

@@ -25,6 +25,11 @@
         <a href="#" onclick="Vip(3)"><img th:src="@{/image/3.png}" width="100px" height="100px"/></a>
         <a href="#" onclick="Vip(1)"><img th:src="@{/image/1.png}" width="100px" height="100px"/></a>
     </div>
+    <div align="center">
+        <a href="#" onclick="Vip(100)" ><span th:text="100" width="100px" height="100px"></span></a>
+        <a href="#" onclick="Vip(200)"><span th:text="200" width="100px" height="100px"></span></a>
+        <a href="#" onclick="Vip(300)"><span th:text="300" width="100px" height="100px"></span></a>
+    </div>
     <div>
         <div>
             <img th:src="@{/image/pay.png}" width="100px" height="100px"/>
@@ -46,7 +51,11 @@
 
     function Vip(num){
         vip = num;
-        $("#check").text("您已经选择充值"+vip+"个月的套餐")
+        if(vip == '1' || vip == '3' || vip == '12'){
+            $("#check").text("您已经选择充值"+vip+"个月的套餐,一共"+num*10+"元")
+        }else {
+            $("#check").text("您已经选择充值"+vip+"个零钱,一共"+num+"元")
+        }
     }
 
     $("#becomeVip").click(function () {

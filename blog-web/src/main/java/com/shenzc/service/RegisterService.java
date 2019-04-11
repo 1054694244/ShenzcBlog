@@ -33,6 +33,7 @@ public class RegisterService {
             registerUser.setBirthday(user.getBirthday());
             registerUser.setIsSupper("N");
             registerUser.setActive("N");
+            registerUser.setMoney(0);
             registerMapper.insert(registerUser);
             return new Blog(true,"注册成功");
         }

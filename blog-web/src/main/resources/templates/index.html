@@ -44,6 +44,7 @@
                 <img th:src="@{/image/vip.jpg}" width="30px" height="30px" class="easyui-linkbutton">
             </span>
             <span style="color: #af1b1c;" field="money" color="green" class="easyui-linkbutton" th:text="${session.user.money}" width="auto" align="right" ></span>
+            <a href="/exit" class="easyui-linkbutton">注销</a>
         </span>
         <span style="float: right">
             <form method="post" action="/search" >

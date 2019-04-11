@@ -4,7 +4,8 @@
 
 
     <select id="search" resultType="com.shenzc.Entity.Article">
-        select * from article
+        select article.* , head,username from article
+        left join user on author_id = user_id
         where title like concat('%',#{title},'%')
     </select>
 

@@ -307,36 +307,40 @@ public class UserService {
      */
     public Blog vip(String id,String vip) throws ParseException {
         User user = userDao.selectUserById(id);
-        String s = null;
-        if("N".equals(user.getIsSupper())){
-            user.setIsSupper("Y");
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            if("12".equals(vip)){
-                calendar.add(Calendar.YEAR,1);
-            }else if("3".equals(vip)){
-                calendar.add(Calendar.MONTH,3);
-            }else if("1".equals(vip)){
-                calendar.add(Calendar.MONTH,1);
+        if("1".equals(vip) || "2".equals(vip) || "3".equals(vip)){
+            String s = null;
+            if("N".equals(user.getIsSupper())){
+                user.setIsSupper("Y");
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                if("12".equals(vip)){
+                    calendar.add(Calendar.YEAR,1);
+                }else if("3".equals(vip)){
+                    calendar.add(Calendar.MONTH,3);
+                }else if("1".equals(vip)){
+                    calendar.add(Calendar.MONTH,1);
+                }
+                Date date = calendar.getTime();
+                s = FormatDateUtils.formatDate(date);
+            }else {
+                s = user.getSupperTime();
+                Date date = FormatDateUtils.dateFormat(s);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                if("12".equals(vip)){
+                    calendar.add(Calendar.YEAR,1);
+                }else if("3".equals(vip)){
+                    calendar.add(Calendar.MONTH,3);
+                }else if("1".equals(vip)){
+                    calendar.add(Calendar.MONTH,1);
+                }
+                Date date1 = calendar.getTime();
+                s = FormatDateUtils.formatDate(date1);
             }
-            Date date = calendar.getTime();
-            s = FormatDateUtils.formatDate(date);
+            user.setSupperTime(s);
         }else {
-            s = user.getSupperTime();
-            Date date = FormatDateUtils.dateFormat(s);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            if("12".equals(vip)){
-                calendar.add(Calendar.YEAR,1);
-            }else if("3".equals(vip)){
-                calendar.add(Calendar.MONTH,3);
-            }else if("1".equals(vip)){
-                calendar.add(Calendar.MONTH,1);
-            }
-            Date date1 = calendar.getTime();
-            s = FormatDateUtils.formatDate(date1);
+            user.setMoney(user.getMoney()+Integer.parseInt(vip));
         }
-        user.setSupperTime(s);
         Integer integer = userDao.update(user, new EntityWrapper<User>().eq("user_id", id));
         /*try{
             redisTemplate.delete("user:"+id);
@@ -373,17 +377,19 @@ public class UserService {
         //修改关注者的article字段
         for (User user:userList) {
             String jsonArticle = user.getArticle();
-            List<MyArticleJson> myArticleJsons = JsonUtils.jsonToList(jsonArticle, MyArticleJson.class);
-            if(myArticleJsons.size()!=0){
-                MyArticleJson myArticleJson = new MyArticleJson();
-                myArticleJson.setName(article.getTitle());
-                if(myArticleJsons.contains(myArticleJson)){
-                    myArticleJsons.remove(myArticleJson);
-                    jsonArticle = JsonUtils.objectToJson(myArticleJsons);
-                    user.setArticle(jsonArticle);
-                    user.setArticleNum(user.getArticleNum()-1);
-                    System.out.println(user);
-                    userDao.update(user,new EntityWrapper<User>().eq("user_id",user.getUserId()));
+            if(jsonArticle != null){
+                List<MyArticleJson> myArticleJsons = JsonUtils.jsonToList(jsonArticle, MyArticleJson.class);
+                if(myArticleJsons.size()!=0){
+                    MyArticleJson myArticleJson = new MyArticleJson();
+                    myArticleJson.setName(article.getTitle());
+                    if(myArticleJsons.contains(myArticleJson)){
+                        myArticleJsons.remove(myArticleJson);
+                        jsonArticle = JsonUtils.objectToJson(myArticleJsons);
+                        user.setArticle(jsonArticle);
+                        user.setArticleNum(user.getArticleNum()-1);
+                        System.out.println(user);
+                        userDao.update(user,new EntityWrapper<User>().eq("user_id",user.getUserId()));
+                    }
                 }
             }
         }
